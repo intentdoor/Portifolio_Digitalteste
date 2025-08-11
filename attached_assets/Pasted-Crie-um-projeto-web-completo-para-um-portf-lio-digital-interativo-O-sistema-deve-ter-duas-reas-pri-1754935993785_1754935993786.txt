@@ -1,0 +1,34 @@
+Crie um projeto web completo para um portfólio digital interativo. O sistema deve ter duas áreas principais: uma área administrativa para o proprietário gerenciar projetos e uma área pública para visitantes.
+
+**Requisitos do Projeto:**
+
+1.  **Área Administrativa (Backend):**
+    * Desenvolva um backend que gerencie as operações CRUD (Criar, Ler, Atualizar, Deletar) para "Projetos" e "Conquistas".
+    * Cada projeto deve ter: título, descrição, tags/categorias, um campo para upload de arquivos (imagens/vídeos) ou links, e um status (publicado/rascunho).
+    * Inclua uma funcionalidade para o proprietário receber notificações por e-mail ou via dashboard sempre que um novo comentário for feito em um projeto.
+    * Use **Node.js com Express** como framework de backend e **MongoDB** como banco de dados.
+
+2.  **Área Pública (Frontend):**
+    * Crie um frontend responsivo, usando **React.js**.
+    * A página inicial deve exibir os projetos mais recentes ou mais curtidos, com miniaturas e títulos.
+    * As páginas de projetos e conquistas devem exibir detalhes completos.
+    * Implemente botões de "curtir" com um contador e um campo para "comentários". O campo de comentários deve ser visível apenas para usuários autenticados.
+    * Inclua um botão para compartilhar no LinkedIn que pré-preencha as informações do projeto.
+    * Crie uma seção "Sobre Mim" com informações personalizáveis pelo proprietário.
+
+3.  **Autenticação de Usuários:**
+    * Implemente um sistema de login e cadastro para visitantes.
+    * Os campos de cadastro devem incluir: nome, e-mail e senha.
+    * Crie uma funcionalidade para recuperação de senha.
+    * Cada usuário deve ter um perfil básico com a opção de adicionar uma foto.
+
+**Instruções para o Replit AI:**
+
+* Gere a estrutura inicial do projeto, incluindo os arquivos e pastas para o frontend em React e o backend em Express/Node.js.
+* Crie os modelos de dados (schemas) para o MongoDB para `Projetos`, `Conquistas`, `Usuários` e `Comentários`.
+* Desenvolva as rotas da API REST para todas as operações CRUD e para as interações de curtidas e comentários.
+* Crie os componentes básicos do React para as páginas principais (`HomePage`, `ProjectDetails`, `AdminDashboard`, `Login`, `Register`).
+* Inclua um CSS básico e responsivo.
+* Adicione comentários explicativos no código para que eu possa entender e personalizar facilmente.
+
+Após a geração do código inicial, eu irei refiná-lo, integrar as funcionalidades e adicionar o design com a ajuda de outras IAs.
