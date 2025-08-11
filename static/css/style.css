@@ -1,5 +1,19 @@
 /* Custom CSS for Digital Portfolio */
 
+/* Green Theme Variables */
+:root {
+    --portfolio-primary: #28a745;
+    --portfolio-primary-dark: #1e7e34;
+    --portfolio-primary-light: #34ce57;
+    --portfolio-secondary: #6c757d;
+    --portfolio-success: #20c997;
+    --portfolio-info: #17a2b8;
+    --portfolio-warning: #ffc107;
+    --portfolio-danger: #dc3545;
+    --portfolio-light: #f8f9fa;
+    --portfolio-dark: #343a40;
+}
+
 /* Base Styles */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -7,7 +21,7 @@ body {
 
 /* Hero Section */
 .hero-section {
-    background: linear-gradient(135deg, var(--bs-primary) 0%, var(--bs-info) 100%);
+    background: linear-gradient(135deg, var(--portfolio-primary) 0%, var(--portfolio-primary-light) 100%);
     position: relative;
     overflow: hidden;
 }
@@ -67,7 +81,7 @@ body {
 }
 
 .social-links a:hover {
-    color: var(--bs-primary) !important;
+    color: var(--portfolio-primary) !important;
 }
 
 /* Custom Button Styles */
@@ -82,7 +96,7 @@ body {
 
 /* Admin Dashboard Specific */
 .stats-card {
-    background: linear-gradient(135deg, var(--bs-primary) 0%, var(--bs-info) 100%);
+    background: linear-gradient(135deg, var(--portfolio-primary) 0%, var(--portfolio-primary-light) 100%);
     color: white;
     border: none;
 }
@@ -90,13 +104,13 @@ body {
 /* Form Styles */
 .form-control:focus,
 .form-select:focus {
-    border-color: var(--bs-primary);
-    box-shadow: 0 0 0 0.2rem rgba(var(--bs-primary-rgb), 0.25);
+    border-color: var(--portfolio-primary);
+    box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
 }
 
 /* Table Hover Effects */
 .table-hover tbody tr:hover {
-    background-color: rgba(var(--bs-primary-rgb), 0.075);
+    background-color: rgba(40, 167, 69, 0.075);
 }
 
 /* Project Image Styles */
@@ -248,6 +262,71 @@ footer {
 
 ::-webkit-scrollbar-thumb:hover {
     background: var(--bs-gray-500);
+}
+
+/* Green Theme Overrides for Bootstrap */
+.btn-primary {
+    background-color: var(--portfolio-primary);
+    border-color: var(--portfolio-primary);
+}
+
+.btn-primary:hover {
+    background-color: var(--portfolio-primary-dark);
+    border-color: var(--portfolio-primary-dark);
+}
+
+.btn-outline-primary {
+    color: var(--portfolio-primary);
+    border-color: var(--portfolio-primary);
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--portfolio-primary);
+    border-color: var(--portfolio-primary);
+}
+
+.bg-primary {
+    background-color: var(--portfolio-primary) !important;
+}
+
+.text-primary {
+    color: var(--portfolio-primary) !important;
+}
+
+.badge.bg-primary {
+    background-color: var(--portfolio-primary) !important;
+}
+
+.navbar-brand:hover {
+    color: var(--portfolio-primary-light) !important;
+}
+
+.nav-link:hover {
+    color: var(--portfolio-primary-light) !important;
+}
+
+.card-header.bg-primary {
+    background-color: var(--portfolio-primary) !important;
+}
+
+.alert-primary {
+    color: #155724;
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+}
+
+.border-primary {
+    border-color: var(--portfolio-primary) !important;
+}
+
+.dropdown-item:hover {
+    background-color: rgba(40, 167, 69, 0.1);
+}
+
+.btn-check:checked + .btn-outline-primary,
+.btn-outline-primary.active {
+    background-color: var(--portfolio-primary);
+    border-color: var(--portfolio-primary);
 }
 
 /* Print Styles */
