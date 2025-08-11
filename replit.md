@@ -7,6 +7,8 @@ This is a Flask-based digital portfolio web application that allows the owner to
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
+Theme preference: Spider/dark theme with cool aesthetic, red/black color scheme.
+Visual style: Dark, gothic, with spider motifs and glowing effects.
 
 ## System Architecture
 
