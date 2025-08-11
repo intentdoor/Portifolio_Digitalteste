@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+
+{% block title %}{{ project.title }} - Digital Portfolio{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <!-- Project Header -->
+            <div class="mb-5">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{{ url_for('public.index') }}">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{{ url_for('public.projects') }}">Projects</a></li>
+                        <li class="breadcrumb-item active">{{ project.title }}</li>
+                    </ol>
+                </nav>
+                
+                <h1 class="display-5 fw-bold mb-3">{{ project.title }}</h1>
+                
+                <!-- Project Meta -->
+                <div class="d-flex flex-wrap gap-3 mb-4">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-heart text-danger me-2"></i>
+                        <span id="like-count">{{ project.likes }}</span>
+                        <span class="ms-1">likes</span>
+                    </div>
+                    
+                    {% if project.tags %}
+                        <div class="d-flex flex-wrap gap-1">
+                            {% for tag in project.tags %}
+                                <span class="badge bg-secondary">{{ tag }}</span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="d-flex flex-wrap gap-2 mb-4">
+                    {% if session.user_id %}
+                        <button class="btn btn-outline-danger" onclick="likeProject('{{ project.id }}')">
+                            <i class="fas fa-heart me-1"></i>Like Project
+                        </button>
+                    {% endif %}
+                    
+                    {% if project.link %}
+                        <a href="{{ project.link }}" target="_blank" class="btn btn-primary">
+                            <i class="fas fa-external-link-alt me-1"></i>View Live Project
+                        </a>
+                    {% endif %}
+                    
+                    <button class="btn btn-info" onclick="shareOnLinkedIn()">
+                        <i class="fab fa-linkedin me-1"></i>Share on LinkedIn
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Project Image -->
+            {% if project.image %}
+                <div class="mb-5">
+                    <img src="{{ url_for('public.uploaded_file', filename=project.image) }}" 
+                         class="img-fluid rounded shadow" alt="{{ project.title }}">
+                </div>
+            {% endif %}
+            
+            <!-- Project Description -->
+            <div class="mb-5">
+                <h2 class="h3 mb-3">About This Project</h2>
+                <div class="project-description">
+                    {{ project.description | replace('\n', '<br>') | safe }}
+                </div>
+            </div>
+            
+            <!-- Comments Section -->
+            <div class="comments-section">
+                <h2 class="h3 mb-4">Comments</h2>
+                
+                <!-- Add Comment Form -->
+                {% if session.user_id %}
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <form action="{{ url_for('public.add_comment', project_id=project.id) }}" method="POST">
+                                <div class="mb-3">
+                                    <label for="comment" class="form-label">Add a comment</label>
+                                    <textarea class="form-control" id="comment" name="comment" rows="3" 
+                                              placeholder="Share your thoughts about this project..." required></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-comment me-1"></i>Post Comment
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <a href="{{ url_for('auth.login') }}" class="alert-link">Login</a> to add comments and interact with projects.
+                    </div>
+                {% endif %}
+                
+                <!-- Comments List -->
+                {% if comments %}
+                    <div class="comments-list">
+                        {% for comment in comments %}
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar-circle bg-primary text-white me-3">
+                                                {{ comment.user_name[0].upper() }}
+                                            </div>
+                                            <div>
+                                                <h6 class="mb-0">{{ comment.user_name }}</h6>
+                                                <small class="text-muted">{{ comment.created_at }}</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p class="mb-0">{{ comment.text }}</p>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-comments fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">No comments yet</h5>
+                        <p class="text-muted">Be the first to share your thoughts about this project!</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function likeProject(projectId) {
+    fetch(`/project/${projectId}/like`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.likes !== undefined) {
+            document.getElementById('like-count').textContent = data.likes;
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+
+function shareOnLinkedIn() {
+    const url = window.location.href;
+    const title = "{{ project.title }}";
+    const description = "{{ project.description[:200] }}".replace(/\n/g, ' ');
+    
+    const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}&title=${encodeURIComponent(title)}&summary=${encodeURIComponent(description)}`;
+    
+    window.open(linkedInUrl, '_blank', 'width=600,height=400');
+}
+</script>
+{% endblock %}

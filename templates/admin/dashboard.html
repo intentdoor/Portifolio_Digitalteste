@@ -1,0 +1,224 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - Digital Portfolio{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Dashboard Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="h2 mb-0">Admin Dashboard</h1>
+                    <p class="text-muted">Welcome back, {{ session.user_name }}</p>
+                </div>
+                <div>
+                    <a href="{{ url_for('admin.projects') }}" class="btn btn-primary me-2">
+                        <i class="fas fa-plus me-1"></i>New Project
+                    </a>
+                    <a href="{{ url_for('public.index') }}" class="btn btn-outline-primary">
+                        <i class="fas fa-eye me-1"></i>View Site
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Stats Cards -->
+    <div class="row mb-4">
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <h5 class="card-title">Total Projects</h5>
+                            <h2 class="mb-0">{{ stats.total_projects }}</h2>
+                        </div>
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-project-diagram fa-2x opacity-75"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <h5 class="card-title">Published</h5>
+                            <h2 class="mb-0">{{ stats.published_projects }}</h2>
+                        </div>
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-check-circle fa-2x opacity-75"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <h5 class="card-title">Total Likes</h5>
+                            <h2 class="mb-0">{{ stats.total_likes }}</h2>
+                        </div>
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-heart fa-2x opacity-75"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card bg-warning text-dark">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <h5 class="card-title">Comments</h5>
+                            <h2 class="mb-0">{{ stats.total_comments }}</h2>
+                        </div>
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-comments fa-2x opacity-75"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <!-- Recent Projects -->
+        <div class="col-lg-8 mb-4">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Recent Projects</h5>
+                    <a href="{{ url_for('admin.projects') }}" class="btn btn-sm btn-outline-primary">
+                        View All
+                    </a>
+                </div>
+                <div class="card-body">
+                    {% if recent_projects %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>Status</th>
+                                        <th>Likes</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for project in recent_projects %}
+                                        <tr>
+                                            <td>
+                                                <strong>{{ project.title }}</strong>
+                                                <br>
+                                                <small class="text-muted">{{ project.description[:50] }}...</small>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-{{ 'success' if project.status == 'published' else 'secondary' }}">
+                                                    {{ project.status.title() }}
+                                                </span>
+                                            </td>
+                                            <td>{{ project.likes }}</td>
+                                            <td>
+                                                <a href="{{ url_for('admin.edit_project', project_id=project.id) }}" 
+                                                   class="btn btn-sm btn-outline-primary">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-project-diagram fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No projects yet</h5>
+                            <a href="{{ url_for('admin.projects') }}" class="btn btn-primary">
+                                Create Your First Project
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Recent Comments -->
+        <div class="col-lg-4 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Recent Comments</h5>
+                </div>
+                <div class="card-body">
+                    {% if recent_comments %}
+                        {% for comment in recent_comments %}
+                            <div class="d-flex mb-3 {% if not loop.last %}border-bottom pb-3{% endif %}">
+                                <div class="avatar-circle bg-primary text-white me-3">
+                                    {{ comment.user_name[0].upper() }}
+                                </div>
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-1">{{ comment.user_name }}</h6>
+                                    <p class="mb-1 small">{{ comment.text[:60] }}...</p>
+                                    <small class="text-muted">{{ comment.created_at }}</small>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-comments fa-2x text-muted mb-2"></i>
+                            <p class="text-muted">No comments yet</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Quick Actions -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 mb-2">
+                            <a href="{{ url_for('admin.projects') }}" class="btn btn-outline-primary w-100">
+                                <i class="fas fa-project-diagram me-2"></i>Manage Projects
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <a href="{{ url_for('admin.achievements') }}" class="btn btn-outline-success w-100">
+                                <i class="fas fa-trophy me-2"></i>Achievements
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <a href="{{ url_for('admin.profile') }}" class="btn btn-outline-info w-100">
+                                <i class="fas fa-user-cog me-2"></i>Profile Settings
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <a href="{{ url_for('public.index') }}" class="btn btn-outline-secondary w-100">
+                                <i class="fas fa-eye me-2"></i>View Portfolio
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Achievements - Admin{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="h2 mb-0">Manage Achievements</h1>
+                    <p class="text-muted">Showcase your accomplishments and milestones</p>
+                </div>
+                <div>
+                    <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-secondary me-2">
+                        <i class="fas fa-arrow-left me-1"></i>Back to Dashboard
+                    </a>
+                    {% if not editing %}
+                        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#achievementModal">
+                            <i class="fas fa-plus me-1"></i>New Achievement
+                        </button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Achievements List -->
+    {% if not editing %}
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        {% if achievements %}
+                            <div class="row">
+                                {% for achievement in achievements %}
+                                    <div class="col-md-6 col-lg-4 mb-4">
+                                        <div class="card h-100 border">
+                                            <div class="card-body">
+                                                <div class="d-flex align-items-start mb-3">
+                                                    <div class="achievement-icon me-3">
+                                                        <i class="fas fa-trophy text-warning fa-2x"></i>
+                                                    </div>
+                                                    <div class="flex-grow-1">
+                                                        <h5 class="card-title">{{ achievement.title }}</h5>
+                                                        <small class="text-muted">{{ achievement.date }}</small>
+                                                    </div>
+                                                </div>
+                                                <p class="card-text">{{ achievement.description }}</p>
+                                                <div class="mt-auto">
+                                                    <div class="btn-group" role="group">
+                                                        <a href="{{ url_for('admin.edit_achievement', achievement_id=achievement.id) }}" 
+                                                           class="btn btn-sm btn-outline-primary">
+                                                            <i class="fas fa-edit"></i> Edit
+                                                        </a>
+                                                        <form action="{{ url_for('admin.delete_achievement', achievement_id=achievement.id) }}" 
+                                                              method="POST" class="d-inline" onsubmit="return confirm('Are you sure?')">
+                                                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                                <i class="fas fa-trash"></i> Delete
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div class="text-center py-5">
+                                <i class="fas fa-trophy fa-4x text-muted mb-3"></i>
+                                <h3 class="text-muted">No achievements yet</h3>
+                                <p class="text-muted">Add your first achievement to showcase your accomplishments!</p>
+                                <button class="btn btn-success btn-lg" data-bs-toggle="modal" data-bs-target="#achievementModal">
+                                    <i class="fas fa-plus me-2"></i>Add First Achievement
+                                </button>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Achievement Modal -->
+<div class="modal fade" id="achievementModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    {% if edit_achievement %}Edit Achievement{% else %}New Achievement{% endif %}
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="{% if edit_achievement %}{{ url_for('admin.edit_achievement', achievement_id=edit_achievement.id) }}{% else %}{{ url_for('admin.new_achievement') }}{% endif %}" 
+                  method="POST">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Achievement Title</label>
+                        <input type="text" class="form-control" id="title" name="title" 
+                               value="{% if edit_achievement %}{{ edit_achievement.title }}{% endif %}" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description</label>
+                        <textarea class="form-control" id="description" name="description" rows="3" required>{% if edit_achievement %}{{ edit_achievement.description }}{% endif %}</textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="date" class="form-label">Date</label>
+                        <input type="date" class="form-control" id="date" name="date" 
+                               value="{% if edit_achievement %}{{ edit_achievement.date }}{% endif %}" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-save me-1"></i>
+                        {% if edit_achievement %}Update{% else %}Create{% endif %} Achievement
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% if editing %}
+<script>
+// Auto-show modal when editing
+document.addEventListener('DOMContentLoaded', function() {
+    var modal = new bootstrap.Modal(document.getElementById('achievementModal'));
+    modal.show();
+});
+</script>
+{% endif %}
+{% endblock %}
