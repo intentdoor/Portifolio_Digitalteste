@@ -11,7 +11,7 @@ def init_database_data():
     if not admin_user:
         # Create default admin user
         admin_user = User(
-            name='Usuário Admin',
+            name='Arthur Américo',
             email='admin@portfolio.com',
             is_admin=True
         )
@@ -20,10 +20,10 @@ def init_database_data():
         
         # Add about info
         about_info = AboutInfo(
-            title='Bem-vindo ao Meu Portfólio',
-            description='Sou um desenvolvedor apaixonado criando experiências digitais incríveis.',
+            title='Bem-vindo ao Portfólio do Arthur Américo',
+            description='Sou Arthur Américo, um desenvolvedor apaixonado criando experiências digitais incríveis.',
             skills=['Desenvolvimento Web', 'UI/UX Design', 'Gerenciamento de Projetos'],
-            contact_email='contact@portfolio.com'
+            contact_email='arthur.americo@portfolio.com'
         )
         db.session.add(about_info)
         

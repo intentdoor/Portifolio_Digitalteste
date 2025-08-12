@@ -1,6 +1,6 @@
-# Spider Portfolio - Digital Portfolio Web Application
+# Arthur Américo - Digital Portfolio Web Application
 
-A Flask-based interactive digital portfolio with a dark spider theme, featuring both administrative and public areas for showcasing projects and achievements.
+A Flask-based interactive digital portfolio with a dark theme, featuring both administrative and public areas for showcasing projects and achievements.
 
 ## Features
 
@@ -99,7 +99,7 @@ python main.py
 ## Project Structure
 
 ```
-spider-portfolio/
+arthur-americo-portfolio/
 ├── app.py              # Flask app initialization
 ├── main.py             # Application entry point
 ├── routes/             # Blueprint route handlers

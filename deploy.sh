@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "🕷️  Spider Portfolio Deployment Script"
+echo "🚀  Arthur Américo Portfolio Deployment Script"
 echo "======================================"
 
 # Check if git is initialized
