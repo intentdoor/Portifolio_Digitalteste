@@ -7,15 +7,16 @@ This is a Flask-based digital portfolio web application that allows the owner to
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
-Theme preference: Spider/dark theme with cool aesthetic, red/black color scheme.
-Visual style: Dark, gothic, with spider motifs and glowing effects.
+Theme preference: Dark theme with cool aesthetic, red/black color scheme.
+Visual style: Dark, modern, with glowing effects.
 Language: Portuguese (Brazil) - Complete site translation implemented.
+Portfolio Owner: Arthur Américo - All references updated from "Portfólio Aranha".
 
 ## System Architecture
 
 ### Backend Framework
 - **Flask with Blueprint Architecture**: The application uses Flask as the web framework with a modular blueprint structure separating authentication (`auth_bp`), admin (`admin_bp`), and public (`public_bp`) routes. This promotes code organization and maintainability.
-- **In-Memory Data Store**: Currently uses a Python dictionary-based data store for MVP functionality, making it easy to prototype and test. The data store is initialized with default admin credentials and sample projects.
+- **PostgreSQL Database with SQLAlchemy**: Migrated from in-memory storage to PostgreSQL database using SQLAlchemy ORM for persistent data storage. Models include User, Project, Achievement, Comment, and AboutInfo.
 - **Session-Based Authentication**: Implements simple session-based authentication with password hashing using Werkzeug's security utilities.
 
 ### Frontend Architecture

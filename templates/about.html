@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}About - Digital Portfolio{% endblock %}
+{% block title %}Sobre - Arthur Américo{% endblock %}
 
 {% block content %}
 <!-- About Section -->
@@ -18,7 +18,7 @@
                 <div class="card h-100">
                     <div class="card-body">
                         <h3 class="card-title">
-                            <i class="fas fa-code text-primary me-2"></i>Skills & Expertise
+                            <i class="fas fa-code text-primary me-2"></i>Habilidades & Expertise
                         </h3>
                         <div class="skills-list">
                             {% for skill in about.skills %}
@@ -33,10 +33,10 @@
                 <div class="card h-100">
                     <div class="card-body">
                         <h3 class="card-title">
-                            <i class="fas fa-envelope text-primary me-2"></i>Get In Touch
+                            <i class="fas fa-envelope text-primary me-2"></i>Entre em Contato
                         </h3>
                         <p class="card-text mb-3">
-                            I'm always interested in new opportunities and exciting projects.
+                            Sempre interessado em novas oportunidades e projetos empolgantes.
                         </p>
                         <a href="mailto:{{ about.contact_email }}" class="btn btn-primary">
                             <i class="fas fa-envelope me-2"></i>{{ about.contact_email }}
@@ -54,8 +54,8 @@
     <div class="container">
         <div class="row mb-4">
             <div class="col-12 text-center">
-                <h2 class="display-5 fw-bold mb-3">Achievements</h2>
-                <p class="lead">Milestones and recognitions along my journey</p>
+                <h2 class="display-5 fw-bold mb-3">Conquistas</h2>
+                <p class="lead">Marcos e reconhecimentos ao longo da minha jornada</p>
             </div>
         </div>
         
@@ -89,13 +89,13 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-8 mx-auto">
-                <h2 class="text-center mb-4">Contact Me</h2>
+                <h2 class="text-center mb-4">Entre em Contato</h2>
                 <div class="card">
                     <div class="card-body">
                         <form action="{{ url_for('public.contact') }}" method="POST">
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label for="name" class="form-label">Name</label>
+                                    <label for="name" class="form-label">Nome</label>
                                     <input type="text" class="form-control" id="name" name="name" required>
                                 </div>
                                 <div class="col-md-6 mb-3">
@@ -104,13 +104,13 @@
                                 </div>
                             </div>
                             <div class="mb-3">
-                                <label for="message" class="form-label">Message</label>
+                                <label for="message" class="form-label">Mensagem</label>
                                 <textarea class="form-control" id="message" name="message" rows="5" 
-                                          placeholder="Tell me about your project or just say hello!" required></textarea>
+                                          placeholder="Conte-me sobre seu projeto ou apenas diga olá!" required></textarea>
                             </div>
                             <div class="text-center">
                                 <button type="submit" class="btn btn-primary btn-lg">
-                                    <i class="fas fa-paper-plane me-2"></i>Send Message
+                                    <i class="fas fa-paper-plane me-2"></i>Enviar Mensagem
                                 </button>
                             </div>
                         </form>

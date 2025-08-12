@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session, jsonify, send_from_directory
 from models.models import db, User, Project, Achievement, Comment, AboutInfo
-from utils.email_utils import send_comment_notification
+from utils.email_utils import send_comment_notification, send_contact_notification
 import uuid
 
 public_bp = Blueprint('public', __name__)
@@ -90,24 +90,17 @@ def contact():
         email = request.form['email']
         message = request.form['message']
         
-        # Store contact message
-        contact_id = str(uuid.uuid4())
-        contact_message = {
-            'id': contact_id,
-            'name': name,
-            'email': email,
-            'message': message,
-            'created_at': '2025-08-11T00:00:00Z'
-        }
+        # Send email notification
+        try:
+            send_contact_notification(name, email, message)
+            flash('Mensagem enviada com sucesso! Obrigado pelo contato.', 'success')
+        except Exception as e:
+            flash('Erro ao enviar mensagem. Tente novamente mais tarde.', 'error')
         
-        if 'contact_messages' not in data_store:
-            data_store['contact_messages'] = []
-        data_store['contact_messages'].append(contact_message)
-        
-        flash('Thank you for your message! I will get back to you soon.', 'success')
         return redirect(url_for('public.contact'))
     
-    return render_template('about.html', about=data_store['about_info'], show_contact=True)
+    about_info = AboutInfo.query.first()
+    return render_template('about.html', about=about_info, show_contact=True)
 
 @public_bp.route('/uploads/<filename>')
 def uploaded_file(filename):

@@ -162,65 +162,68 @@ def new_achievement():
 @admin_bp.route('/achievements/<achievement_id>/edit', methods=['GET', 'POST'])
 @admin_required
 def edit_achievement(achievement_id):
-    achievement = None
-    for a in data_store['achievements']:
-        if a['id'] == achievement_id:
-            achievement = a
-            break
+    achievement = Achievement.query.get(achievement_id)
     
     if not achievement:
         flash('Achievement not found', 'error')
         return redirect(url_for('admin.achievements'))
     
     if request.method == 'POST':
-        achievement['title'] = request.form['title']
-        achievement['description'] = request.form['description']
-        achievement['date'] = request.form['date']
+        achievement.title = request.form['title']
+        achievement.description = request.form['description']
+        date_str = request.form['date']
         
+        from datetime import datetime
+        achievement.date = datetime.strptime(date_str, '%Y-%m-%d').date()
+        
+        db.session.commit()
         flash('Achievement updated successfully!', 'success')
         return redirect(url_for('admin.achievements'))
     
-    return render_template('admin/achievements.html', achievements=data_store['achievements'], 
+    all_achievements = Achievement.query.order_by(Achievement.date.desc()).all()
+    return render_template('admin/achievements.html', achievements=all_achievements, 
                          editing=True, edit_achievement=achievement)
 
 @admin_bp.route('/achievements/<achievement_id>/delete', methods=['POST'])
 @admin_required
 def delete_achievement(achievement_id):
-    data_store['achievements'] = [a for a in data_store['achievements'] if a['id'] != achievement_id]
-    flash('Achievement deleted successfully!', 'success')
+    achievement = Achievement.query.get(achievement_id)
+    if achievement:
+        db.session.delete(achievement)
+        db.session.commit()
+        flash('Achievement deleted successfully!', 'success')
+    else:
+        flash('Achievement not found', 'error')
     return redirect(url_for('admin.achievements'))
 
 @admin_bp.route('/profile')
 @admin_required
 def profile():
     # Get admin user
-    admin_user = None
-    for user in data_store['users']:
-        if user['id'] == session['user_id']:
-            admin_user = user
-            break
+    admin_user = User.query.get(session['user_id'])
+    about_info = AboutInfo.query.first()
     
     return render_template('admin/profile.html', user=admin_user, 
-                         about_info=data_store['about_info'])
+                         about_info=about_info)
 
 @admin_bp.route('/profile/update', methods=['POST'])
 @admin_required
 def update_profile():
     # Update admin user info
-    for user in data_store['users']:
-        if user['id'] == session['user_id']:
-            user['name'] = request.form['name']
-            user['email'] = request.form['email']
-            session['user_name'] = user['name']
-            break
+    admin_user = User.query.get(session['user_id'])
+    if admin_user:
+        admin_user.name = request.form['name']
+        admin_user.email = request.form['email']
+        session['user_name'] = admin_user.name
     
     # Update about info
-    data_store['about_info'] = {
-        'title': request.form['about_title'],
-        'description': request.form['about_description'],
-        'skills': [skill.strip() for skill in request.form['skills'].split(',') if skill.strip()],
-        'contact_email': request.form['contact_email']
-    }
+    about_info = AboutInfo.query.first()
+    if about_info:
+        about_info.title = request.form['about_title']
+        about_info.description = request.form['about_description']
+        about_info.skills = [skill.strip() for skill in request.form['skills'].split(',') if skill.strip()]
+        about_info.contact_email = request.form['contact_email']
     
+    db.session.commit()
     flash('Profile updated successfully!', 'success')
     return redirect(url_for('admin.profile'))
