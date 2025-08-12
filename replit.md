@@ -11,6 +11,7 @@ Theme preference: Dark theme with cool aesthetic, red/black color scheme.
 Visual style: Dark, modern, with glowing effects.
 Language: Portuguese (Brazil) - Complete site translation implemented.
 Portfolio Owner: Arthur Américo - All references updated from "Portfólio Aranha".
+Text Readability: Dark text on light sections for improved readability.
 
 ## System Architecture
 

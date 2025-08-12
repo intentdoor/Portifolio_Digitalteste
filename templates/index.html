@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Início - Portfólio Digital{% endblock %}
+{% block title %}Início - Arthur Américo{% endblock %}
 
 {% block content %}
 <!-- Hero Section -->
@@ -8,7 +8,7 @@
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-8">
-                <h1 class="display-4 fw-bold mb-3">Bem-vindo ao Meu Portfólio Digital</h1>
+                <h1 class="display-4 fw-bold mb-3">Bem-vindo ao Portfólio do Arthur Américo</h1>
                 <p class="lead mb-4">Descubra meus projetos mais recentes, conquistas e trabalho criativo. Sou apaixonado por criar soluções digitais inovadoras que fazem a diferença.</p>
                 <div class="d-flex gap-3">
                     <a href="{{ url_for('public.projects') }}" class="btn btn-light btn-lg">
@@ -85,14 +85,14 @@
                                     </small>
                                     {% if project.link %}
                                         <a href="{{ project.link }}" target="_blank" class="btn btn-sm btn-outline-primary">
-                                            <i class="fas fa-external-link-alt me-1"></i>Live Demo
+                                            <i class="fas fa-external-link-alt me-1"></i>Demo Ao Vivo
                                         </a>
                                     {% endif %}
                                 </div>
                                 
                                 <a href="{{ url_for('public.project_detail', project_id=project.id) }}" 
                                    class="btn btn-primary">
-                                    <i class="fas fa-arrow-right me-2"></i>View Details
+                                    <i class="fas fa-arrow-right me-2"></i>Ver Detalhes
                                 </a>
                             </div>
                         </div>
@@ -103,15 +103,15 @@
             {% if not show_all and projects|length >= 6 %}
                 <div class="text-center mt-5">
                     <a href="{{ url_for('public.projects') }}" class="btn btn-outline-primary btn-lg">
-                        <i class="fas fa-th me-2"></i>View All Projects
+                        <i class="fas fa-th me-2"></i>Ver Todos os Projetos
                     </a>
                 </div>
             {% endif %}
         {% else %}
             <div class="text-center py-5">
                 <i class="fas fa-folder-open fa-4x text-muted mb-3"></i>
-                <h3 class="text-muted">No projects available yet</h3>
-                <p class="text-muted">Check back later for exciting new projects!</p>
+                <h3 class="text-muted">Nenhum projeto disponível ainda</h3>
+                <p class="text-muted">Volte mais tarde para novos projetos empolgantes!</p>
             </div>
         {% endif %}
     </div>
@@ -123,13 +123,13 @@
     <div class="container text-center">
         <div class="row">
             <div class="col-lg-8 mx-auto">
-                <h3 class="mb-3">Interested in Working Together?</h3>
-                <p class="lead mb-4">I'm always open to discussing new opportunities and exciting projects.</p>
+                <h3 class="mb-3">Interessado em Trabalhar Juntos?</h3>
+                <p class="lead mb-4">Sempre aberto para discutir novas oportunidades e projetos empolgantes.</p>
                 <a href="{{ url_for('public.contact') }}" class="btn btn-primary btn-lg me-3">
-                    <i class="fas fa-envelope me-2"></i>Get In Touch
+                    <i class="fas fa-envelope me-2"></i>Entre em Contato
                 </a>
                 <a href="{{ url_for('public.about') }}" class="btn btn-outline-primary btn-lg">
-                    <i class="fas fa-info-circle me-2"></i>Learn More
+                    <i class="fas fa-info-circle me-2"></i>Saber Mais
                 </a>
             </div>
         </div>

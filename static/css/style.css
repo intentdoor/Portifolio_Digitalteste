@@ -554,6 +554,34 @@ footer {
     animation: webPulse 3s infinite ease-in-out;
 }
 
+/* Improve text readability on light backgrounds */
+.bg-light {
+    background-color: #f8f9fa !important;
+}
+
+.bg-light h3,
+.bg-light p,
+.bg-light .lead {
+    color: #2c2c2c !important;
+    text-shadow: none;
+}
+
+/* Ensure better contrast for general text */
+.text-muted {
+    color: #6c757d !important;
+}
+
+/* Dark text for better readability on white/light sections */
+section:not(.hero-section):not(.bg-dark) {
+    color: #2c2c2c;
+}
+
+section:not(.hero-section):not(.bg-dark) h2,
+section:not(.hero-section):not(.bg-dark) h3,
+section:not(.hero-section):not(.bg-dark) p:not(.text-muted) {
+    color: #2c2c2c !important;
+}
+
 /* Footer styling */
 footer {
     background: linear-gradient(135deg, var(--portfolio-dark) 0%, var(--portfolio-primary-dark) 100%) !important;
