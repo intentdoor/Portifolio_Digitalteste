@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session, jsonify, send_from_directory
-from models.data_store import data_store
+from models.models import db, User, Project, Achievement, Comment, AboutInfo
 from utils.email_utils import send_comment_notification
 import uuid
 
@@ -8,31 +8,25 @@ public_bp = Blueprint('public', __name__)
 @public_bp.route('/')
 def index():
     # Get published projects, sorted by likes and recent first
-    published_projects = [p for p in data_store['projects'] if p['status'] == 'published']
-    published_projects = sorted(published_projects, key=lambda x: (x['likes'], x['created_at']), reverse=True)
+    published_projects = Project.query.filter_by(status='published').order_by(Project.likes.desc(), Project.created_at.desc()).limit(6).all()
     
-    return render_template('index.html', projects=published_projects[:6])
+    return render_template('index.html', projects=published_projects)
 
 @public_bp.route('/projects')
 def projects():
-    published_projects = [p for p in data_store['projects'] if p['status'] == 'published']
+    published_projects = Project.query.filter_by(status='published').order_by(Project.likes.desc(), Project.created_at.desc()).all()
     return render_template('index.html', projects=published_projects, show_all=True)
 
 @public_bp.route('/project/<project_id>')
 def project_detail(project_id):
-    project = None
-    for p in data_store['projects']:
-        if p['id'] == project_id and p['status'] == 'published':
-            project = p
-            break
+    project = Project.query.filter_by(id=project_id, status='published').first()
     
     if not project:
         flash('Project not found', 'error')
         return redirect(url_for('public.index'))
     
     # Get comments for this project
-    comments = [c for c in data_store['comments'] if c['project_id'] == project_id]
-    comments = sorted(comments, key=lambda x: x['created_at'], reverse=True)
+    comments = Comment.query.filter_by(project_id=project_id).order_by(Comment.created_at.desc()).all()
     
     return render_template('project_detail.html', project=project, comments=comments)
 
@@ -41,15 +35,12 @@ def like_project(project_id):
     if not session.get('user_id'):
         return jsonify({'error': 'Login required'}), 401
     
-    project = None
-    for p in data_store['projects']:
-        if p['id'] == project_id:
-            project = p
-            break
+    project = Project.query.get(project_id)
     
     if project:
-        project['likes'] = project.get('likes', 0) + 1
-        return jsonify({'likes': project['likes']})
+        project.likes = project.likes + 1
+        db.session.commit()
+        return jsonify({'likes': project.likes})
     
     return jsonify({'error': 'Project not found'}), 404
 
@@ -68,17 +59,14 @@ def add_comment(project_id):
     user_name = session.get('user_name', 'Anonymous')
     
     # Create new comment
-    comment_id = str(uuid.uuid4())
-    new_comment = {
-        'id': comment_id,
-        'project_id': project_id,
-        'user_id': session['user_id'],
-        'user_name': user_name,
-        'text': comment_text,
-        'created_at': '2025-08-11T00:00:00Z'  # In production, use datetime.now()
-    }
+    new_comment = Comment(
+        content=comment_text,
+        project_id=project_id,
+        user_id=session['user_id']
+    )
     
-    data_store['comments'].append(new_comment)
+    db.session.add(new_comment)
+    db.session.commit()
     
     # Send notification to admin
     try:
@@ -91,8 +79,9 @@ def add_comment(project_id):
 
 @public_bp.route('/about')
 def about():
-    return render_template('about.html', about=data_store['about_info'], 
-                         achievements=data_store['achievements'])
+    about_info = AboutInfo.query.first()
+    achievements = Achievement.query.order_by(Achievement.date.desc()).all()
+    return render_template('about.html', about=about_info, achievements=achievements)
 
 @public_bp.route('/contact', methods=['GET', 'POST'])
 def contact():

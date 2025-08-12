@@ -1,7 +1,7 @@
 import smtplib
 import os
 from email.mime.text import MIMEText
-from models.data_store import data_store, get_project_by_id
+from models.data_store import get_project_by_id
 
 def send_comment_notification(project_id, commenter_name, comment_text):
     """Send email notification to admin when new comment is posted"""
@@ -20,20 +20,18 @@ def send_comment_notification(project_id, commenter_name, comment_text):
         return
     
     # Get admin email
-    admin_email = None
-    for user in data_store['users']:
-        if user.get('is_admin'):
-            admin_email = user['email']
-            break
+    from models.models import User
+    admin_user = User.query.filter_by(is_admin=True).first()
+    admin_email = admin_user.email if admin_user else None
     
     if not admin_email:
         return
     
-    subject = f"New Comment on '{project['title']}'"
+    subject = f"New Comment on '{project.title}''"
     body = f"""
     Hi Admin,
     
-    A new comment has been posted on your project "{project['title']}".
+    A new comment has been posted on your project "{project.title}".
     
     Commenter: {commenter_name}
     Comment: {comment_text}
@@ -71,11 +69,9 @@ def send_contact_notification(name, email, message):
         return
     
     # Get admin email
-    admin_email = None
-    for user in data_store['users']:
-        if user.get('is_admin'):
-            admin_email = user['email']
-            break
+    from models.models import User
+    admin_user = User.query.filter_by(is_admin=True).first()
+    admin_email = admin_user.email if admin_user else None
     
     if not admin_email:
         return

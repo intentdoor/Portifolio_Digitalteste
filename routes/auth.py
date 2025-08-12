@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session
 from werkzeug.security import generate_password_hash, check_password_hash
-from models.data_store import data_store
+from models.models import db, User
 import uuid
 import smtplib
 from email.mime.text import MIMEText
@@ -15,16 +15,12 @@ def login():
         password = request.form['password']
         
         # Find user by email
-        user = None
-        for u in data_store['users']:
-            if u['email'] == email:
-                user = u
-                break
+        user = User.query.filter_by(email=email).first()
         
-        if user and check_password_hash(user['password_hash'], password):
-            session['user_id'] = user['id']
-            session['user_name'] = user['name']
-            session['is_admin'] = user.get('is_admin', False)
+        if user and user.check_password(password):
+            session['user_id'] = user.id
+            session['user_name'] = user.name
+            session['is_admin'] = user.is_admin
             flash('Login realizado com sucesso!', 'success')
             
             # Redirect admin users to admin dashboard
@@ -50,23 +46,21 @@ def register():
             return render_template('auth/register.html')
         
         # Check if email already exists
-        for user in data_store['users']:
-            if user['email'] == email:
-                flash('Email já está cadastrado', 'error')
-                return render_template('auth/register.html')
+        existing_user = User.query.filter_by(email=email).first()
+        if existing_user:
+            flash('Email já está cadastrado', 'error')
+            return render_template('auth/register.html')
         
         # Create new user
-        user_id = str(uuid.uuid4())
-        new_user = {
-            'id': user_id,
-            'name': name,
-            'email': email,
-            'password_hash': generate_password_hash(password),
-            'is_admin': False,
-            'profile_image': None
-        }
+        new_user = User(
+            name=name,
+            email=email,
+            is_admin=False
+        )
+        new_user.set_password(password)
         
-        data_store['users'].append(new_user)
+        db.session.add(new_user)
+        db.session.commit()
         flash('Cadastro realizado com sucesso! Por favor, faça login.', 'success')
         return redirect(url_for('auth.login'))
     

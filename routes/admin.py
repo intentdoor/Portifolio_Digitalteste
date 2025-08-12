@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session, jsonify
 from werkzeug.utils import secure_filename
-from models.data_store import data_store
+from models.models import db, User, Project, Achievement, Comment, AboutInfo
 import uuid
 import os
 from utils.email_utils import send_comment_notification
@@ -22,17 +22,17 @@ def admin_required(f):
 def dashboard():
     # Get statistics
     stats = {
-        'total_projects': len(data_store['projects']),
-        'published_projects': len([p for p in data_store['projects'] if p['status'] == 'published']),
-        'total_achievements': len(data_store['achievements']),
-        'total_users': len([u for u in data_store['users'] if not u.get('is_admin', False)]),
-        'total_comments': len(data_store['comments']),
-        'total_likes': sum(p['likes'] for p in data_store['projects'])
+        'total_projects': Project.query.count(),
+        'published_projects': Project.query.filter_by(status='published').count(),
+        'total_achievements': Achievement.query.count(),
+        'total_users': User.query.filter_by(is_admin=False).count(),
+        'total_comments': Comment.query.count(),
+        'total_likes': db.session.query(db.func.sum(Project.likes)).scalar() or 0
     }
     
     # Get recent activities
-    recent_projects = sorted(data_store['projects'], key=lambda x: x['created_at'], reverse=True)[:5]
-    recent_comments = sorted(data_store['comments'], key=lambda x: x['created_at'], reverse=True)[:5]
+    recent_projects = Project.query.order_by(Project.created_at.desc()).limit(5).all()
+    recent_comments = Comment.query.order_by(Comment.created_at.desc()).limit(5).all()
     
     return render_template('admin/dashboard.html', stats=stats, 
                          recent_projects=recent_projects, recent_comments=recent_comments)
@@ -40,7 +40,8 @@ def dashboard():
 @admin_bp.route('/projects')
 @admin_required
 def projects():
-    return render_template('admin/projects.html', projects=data_store['projects'])
+    all_projects = Project.query.order_by(Project.created_at.desc()).all()
+    return render_template('admin/projects.html', projects=all_projects)
 
 @admin_bp.route('/projects/new', methods=['GET', 'POST'])
 @admin_required
@@ -62,44 +63,39 @@ def new_project():
                 file.save(os.path.join('uploads', image_filename))
         
         # Create new project
-        project_id = str(uuid.uuid4())
-        new_project = {
-            'id': project_id,
-            'title': title,
-            'description': description,
-            'tags': [tag.strip() for tag in tags],
-            'status': status,
-            'link': link,
-            'image': image_filename,
-            'likes': 0,
-            'created_at': '2025-08-11T00:00:00Z'  # In production, use datetime.now()
-        }
+        new_project = Project(
+            title=title,
+            description=description,
+            tags=[tag.strip() for tag in tags],
+            status=status,
+            link=link,
+            image=image_filename,
+            likes=0
+        )
         
-        data_store['projects'].append(new_project)
+        db.session.add(new_project)
+        db.session.commit()
         flash('Project created successfully!', 'success')
         return redirect(url_for('admin.projects'))
     
-    return render_template('admin/projects.html', projects=data_store['projects'], editing=True)
+    all_projects = Project.query.order_by(Project.created_at.desc()).all()
+    return render_template('admin/projects.html', projects=all_projects, editing=True)
 
 @admin_bp.route('/projects/<project_id>/edit', methods=['GET', 'POST'])
 @admin_required
 def edit_project(project_id):
-    project = None
-    for p in data_store['projects']:
-        if p['id'] == project_id:
-            project = p
-            break
+    project = Project.query.get(project_id)
     
     if not project:
         flash('Project not found', 'error')
         return redirect(url_for('admin.projects'))
     
     if request.method == 'POST':
-        project['title'] = request.form['title']
-        project['description'] = request.form['description']
-        project['tags'] = [tag.strip() for tag in request.form['tags'].split(',') if tag.strip()]
-        project['status'] = request.form['status']
-        project['link'] = request.form.get('link', '')
+        project.title = request.form['title']
+        project.description = request.form['description']
+        project.tags = [tag.strip() for tag in request.form['tags'].split(',') if tag.strip()]
+        project.status = request.form['status']
+        project.link = request.form.get('link', '')
         
         # Handle file upload
         if 'image' in request.files:
@@ -108,27 +104,34 @@ def edit_project(project_id):
                 filename = secure_filename(file.filename)
                 image_filename = f"{uuid.uuid4()}_{filename}"
                 file.save(os.path.join('uploads', image_filename))
-                project['image'] = image_filename
+                project.image = image_filename
         
+        db.session.commit()
         flash('Project updated successfully!', 'success')
         return redirect(url_for('admin.projects'))
     
-    return render_template('admin/projects.html', projects=data_store['projects'], 
+    all_projects = Project.query.order_by(Project.created_at.desc()).all()
+    return render_template('admin/projects.html', projects=all_projects, 
                          editing=True, edit_project=project)
 
 @admin_bp.route('/projects/<project_id>/delete', methods=['POST'])
 @admin_required
 def delete_project(project_id):
-    data_store['projects'] = [p for p in data_store['projects'] if p['id'] != project_id]
-    # Also delete associated comments
-    data_store['comments'] = [c for c in data_store['comments'] if c['project_id'] != project_id]
-    flash('Project deleted successfully!', 'success')
+    project = Project.query.get(project_id)
+    if project:
+        # Associated comments will be deleted automatically due to cascade
+        db.session.delete(project)
+        db.session.commit()
+        flash('Project deleted successfully!', 'success')
+    else:
+        flash('Project not found', 'error')
     return redirect(url_for('admin.projects'))
 
 @admin_bp.route('/achievements')
 @admin_required
 def achievements():
-    return render_template('admin/achievements.html', achievements=data_store['achievements'])
+    all_achievements = Achievement.query.order_by(Achievement.date.desc()).all()
+    return render_template('admin/achievements.html', achievements=all_achievements)
 
 @admin_bp.route('/achievements/new', methods=['GET', 'POST'])
 @admin_required
@@ -136,22 +139,25 @@ def new_achievement():
     if request.method == 'POST':
         title = request.form['title']
         description = request.form['description']
-        date = request.form['date']
+        date_str = request.form['date']
         
         # Create new achievement
-        achievement_id = str(uuid.uuid4())
-        new_achievement = {
-            'id': achievement_id,
-            'title': title,
-            'description': description,
-            'date': date
-        }
+        from datetime import datetime
+        achievement_date = datetime.strptime(date_str, '%Y-%m-%d').date()
         
-        data_store['achievements'].append(new_achievement)
+        new_achievement = Achievement(
+            title=title,
+            description=description,
+            date=achievement_date
+        )
+        
+        db.session.add(new_achievement)
+        db.session.commit()
         flash('Achievement created successfully!', 'success')
         return redirect(url_for('admin.achievements'))
     
-    return render_template('admin/achievements.html', achievements=data_store['achievements'], editing=True)
+    all_achievements = Achievement.query.order_by(Achievement.date.desc()).all()
+    return render_template('admin/achievements.html', achievements=all_achievements, editing=True)
 
 @admin_bp.route('/achievements/<achievement_id>/edit', methods=['GET', 'POST'])
 @admin_required
