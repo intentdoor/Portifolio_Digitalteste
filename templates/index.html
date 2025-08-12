@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Home - Digital Portfolio{% endblock %}
+{% block title %}Início - Portfólio Digital{% endblock %}
 
 {% block content %}
 <!-- Hero Section -->
@@ -8,14 +8,14 @@
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-8">
-                <h1 class="display-4 fw-bold mb-3">Welcome to My Digital Portfolio</h1>
-                <p class="lead mb-4">Discover my latest projects, achievements, and creative work. I'm passionate about creating innovative digital solutions that make a difference.</p>
+                <h1 class="display-4 fw-bold mb-3">Bem-vindo ao Meu Portfólio Digital</h1>
+                <p class="lead mb-4">Descubra meus projetos mais recentes, conquistas e trabalho criativo. Sou apaixonado por criar soluções digitais inovadoras que fazem a diferença.</p>
                 <div class="d-flex gap-3">
                     <a href="{{ url_for('public.projects') }}" class="btn btn-light btn-lg">
-                        <i class="fas fa-eye me-2"></i>View Projects
+                        <i class="fas fa-eye me-2"></i>Ver Projetos
                     </a>
                     <a href="{{ url_for('public.about') }}" class="btn btn-outline-light btn-lg">
-                        <i class="fas fa-user me-2"></i>About Me
+                        <i class="fas fa-user me-2"></i>Sobre Mim
                     </a>
                 </div>
             </div>
@@ -34,13 +34,13 @@
         <div class="row mb-4">
             <div class="col-12">
                 <h2 class="text-center mb-3">
-                    {% if show_all %}All Projects{% else %}Featured Projects{% endif %}
+                    {% if show_all %}Todos os Projetos{% else %}Projetos em Destaque{% endif %}
                 </h2>
                 <p class="text-center text-muted">
                     {% if show_all %}
-                        Explore all my published projects
+                        Explore todos os meus projetos publicados
                     {% else %}
-                        Check out some of my most popular and recent work
+                        Confira alguns dos meus trabalhos mais populares e recentes
                     {% endif %}
                 </p>
             </div>

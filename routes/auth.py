@@ -25,14 +25,14 @@ def login():
             session['user_id'] = user['id']
             session['user_name'] = user['name']
             session['is_admin'] = user.get('is_admin', False)
-            flash('Login successful!', 'success')
+            flash('Login realizado com sucesso!', 'success')
             
             # Redirect admin users to admin dashboard
             if session.get('is_admin'):
                 return redirect(url_for('admin.dashboard'))
             return redirect(url_for('public.index'))
         else:
-            flash('Invalid email or password', 'error')
+            flash('Email ou senha inválidos', 'error')
     
     return render_template('auth/login.html')
 
@@ -46,13 +46,13 @@ def register():
         
         # Validation
         if password != confirm_password:
-            flash('Passwords do not match', 'error')
+            flash('As senhas não coincidem', 'error')
             return render_template('auth/register.html')
         
         # Check if email already exists
         for user in data_store['users']:
             if user['email'] == email:
-                flash('Email already registered', 'error')
+                flash('Email já está cadastrado', 'error')
                 return render_template('auth/register.html')
         
         # Create new user
@@ -67,7 +67,7 @@ def register():
         }
         
         data_store['users'].append(new_user)
-        flash('Registration successful! Please log in.', 'success')
+        flash('Cadastro realizado com sucesso! Por favor, faça login.', 'success')
         return redirect(url_for('auth.login'))
     
     return render_template('auth/register.html')

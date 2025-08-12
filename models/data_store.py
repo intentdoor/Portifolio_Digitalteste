@@ -8,9 +8,9 @@ data_store = {
     'achievements': [],
     'comments': [],
     'about_info': {
-        'title': 'Welcome to My Portfolio',
-        'description': 'I am a passionate developer creating amazing digital experiences.',
-        'skills': ['Web Development', 'UI/UX Design', 'Project Management'],
+        'title': 'Bem-vindo ao Meu Portfólio',
+        'description': 'Sou um desenvolvedor apaixonado criando experiências digitais incríveis.',
+        'skills': ['Desenvolvimento Web', 'UI/UX Design', 'Gerenciamento de Projetos'],
         'contact_email': 'contact@portfolio.com'
     }
 }
@@ -22,7 +22,7 @@ def init_data_store():
         admin_id = str(uuid.uuid4())
         admin_user = {
             'id': admin_id,
-            'name': 'Admin User',
+            'name': 'Usuário Admin',
             'email': 'admin@portfolio.com',
             'password_hash': generate_password_hash('admin123'),  # Change this in production
             'is_admin': True,
@@ -34,9 +34,9 @@ def init_data_store():
         sample_projects = [
             {
                 'id': str(uuid.uuid4()),
-                'title': 'E-Commerce Platform',
-                'description': 'A full-stack e-commerce solution built with modern web technologies. Features include user authentication, shopping cart, payment integration, and admin dashboard.',
-                'tags': ['Web Development', 'Full Stack', 'E-commerce'],
+                'title': 'Plataforma E-Commerce',
+                'description': 'Uma solução completa de e-commerce construída com tecnologias web modernas. Inclui autenticação de usuários, carrinho de compras, integração de pagamentos e painel administrativo.',
+                'tags': ['Desenvolvimento Web', 'Full Stack', 'E-commerce'],
                 'status': 'published',
                 'link': 'https://github.com/example/ecommerce',
                 'image': None,
@@ -45,9 +45,9 @@ def init_data_store():
             },
             {
                 'id': str(uuid.uuid4()),
-                'title': 'Mobile Task Manager',
-                'description': 'A responsive task management application with drag-and-drop functionality, real-time updates, and collaborative features.',
-                'tags': ['Mobile Development', 'React', 'UI/UX'],
+                'title': 'Gerenciador de Tarefas Mobile',
+                'description': 'Uma aplicação responsiva de gerenciamento de tarefas com funcionalidade de arrastar e soltar, atualizações em tempo real e recursos colaborativos.',
+                'tags': ['Desenvolvimento Mobile', 'React', 'UI/UX'],
                 'status': 'published',
                 'link': 'https://github.com/example/taskmanager',
                 'image': None,
@@ -56,9 +56,9 @@ def init_data_store():
             },
             {
                 'id': str(uuid.uuid4()),
-                'title': 'Data Visualization Dashboard',
-                'description': 'An interactive dashboard for visualizing complex datasets with customizable charts, filters, and real-time data updates.',
-                'tags': ['Data Visualization', 'Dashboard', 'Analytics'],
+                'title': 'Dashboard de Visualização de Dados',
+                'description': 'Um painel interativo para visualizar conjuntos de dados complexos com gráficos personalizáveis, filtros e atualizações de dados em tempo real.',
+                'tags': ['Visualização de Dados', 'Dashboard', 'Analytics'],
                 'status': 'draft',
                 'link': '',
                 'image': None,
@@ -72,7 +72,7 @@ def init_data_store():
         sample_achievements = [
             {
                 'id': str(uuid.uuid4()),
-                'title': 'Certified Web Developer',
+                'title': 'Desenvolvedor Web Certificado',
                 'description': 'Completed advanced web development certification with distinction.',
                 'date': '2025-06-01'
             },
